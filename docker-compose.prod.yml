@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+
+  redis:
+    image: 'redis:latest'
+
+  api:
+    image: 'mdtahmid/api:latest'
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+
+  client:
+    image: 'mdtahmid/client:latest'
+
+  worker:
+    image: 'mdtahmid/worker:latest'
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  nginx:
+    image: 'mdtahmid/nginx:latest'
+    depends_on:
+      - api
+      - client
+    restart: always
+    ports:
+      - '80:80'
