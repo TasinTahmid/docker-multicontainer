@@ -58,3 +58,5 @@ jobs:
           file: ./nginx/Dockerfile
           push: true
           tags: mdtahmid/nginx:latest
+
+          
