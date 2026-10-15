@@ -67,7 +67,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::584503397704:role/GitHubActionsDeployRole
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: eu-north-1
 
       - name: Force new ECS deployments
         run: |
