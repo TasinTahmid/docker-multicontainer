@@ -1,5 +1,4 @@
-
-name: Build and Push Docker Images
+name: Build, Push, and Deploy to ECS
 
 on:
   push:
@@ -9,9 +8,14 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+
+env:
+  AWS_REGION: eu-north-1
+  ECS_CLUSTER: docker-multicontainer-cluster
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -59,4 +63,39 @@ jobs:
           push: true
           tags: mdtahmid/nginx:latest
 
-          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::584503397704:role/GitHubActionsDeployRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Force new ECS deployments
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service api \
+            --force-new-deployment
+
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service docker-client-service-5xegozw7 \
+            --force-new-deployment
+
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service docker-worker-service-pj7cjh35 \
+            --force-new-deployment
+
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service nginx \
+            --force-new-deployment
+
+      - name: Wait for ECS services to stabilize
+        run: |
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services api \
+                      docker-client-service-5xegozw7 \
+                      docker-worker-service-pj7cjh35 \
+                      nginx
