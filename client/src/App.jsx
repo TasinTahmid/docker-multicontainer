@@ -11,7 +11,7 @@ function App() {
 		<>
 			<header className="app-header">
 				<Link to="/">Home</Link>
-				<Link to="/otherpage">Other Page</Link>
+				<Link to="/otherpage">Updated Other Page</Link>
 			</header>
 			
 			<section id="center">
