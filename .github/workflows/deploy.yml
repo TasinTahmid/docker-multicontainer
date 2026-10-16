@@ -99,6 +99,5 @@ jobs:
                       docker-client-service-5xegozw7 \
                       docker-worker-service-pj7cjh35 \
                       nginx
-            --region eu-north-1 \
             --cli-read-timeout 60 \
             --max-attempts 60
